@@ -1,33 +1,31 @@
 package br.com.setcons.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import br.com.setcons.util.JPAUtil;
 
 public class AgendaRepositorio {
-	
-	private Long nextId = 1L;
 
-	private List<Agenda> agendas = new ArrayList<Agenda>();
-	
-	public void adiciona(Agenda agenda){
-		
-		if (agendas.contains(agenda)){
-			agendas.remove(agenda);
-			agendas.add(agenda);	
-		}else{
-			agenda.setId(nextId++);
-			agendas.add(agenda);
-		}
+	private EntityManager em = JPAUtil.createEntityManager();
+
+	public void adiciona(Agenda agenda) {
+		em.getTransaction().begin();
+		em.persist(agenda);
+		em.getTransaction().commit();
 	}
-	public void remover(Agenda agenda){
-		agendas.remove(agenda);
+
+	public void remover(Agenda agenda) {
+		em.getTransaction().begin();
+		em.remove(agenda);
+		em.getTransaction().commit();
 	}
-	public Collection<Agenda> todas(){
-		return agendas;
+
+	public Collection<Agenda> todas() {
+		Query q =  em.createQuery("select a from Agenda a");
+		return q.getResultList();
 	}
-	
-	
+
 }
